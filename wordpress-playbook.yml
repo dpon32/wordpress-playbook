@@ -1,0 +1,19 @@
+- hosts: webservers
+
+  tasks:
+          - name: Install Python3
+            apt: 
+              name: python3
+              state: present
+            become: yes
+
+          - name: Make Python3 the default Python Interpreter
+            raw: update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
+            become: yes
+          
+- hosts: webservers 
+  roles:
+          - server
+          - php
+          - mysql
+          - wordpress

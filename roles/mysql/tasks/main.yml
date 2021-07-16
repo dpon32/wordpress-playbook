@@ -1,0 +1,40 @@
+---
+# tasks file for mysql
+#
+- name: Install Pip
+  apt: name=python3-pip state=present
+  become: yes
+
+- name: Install pymysql
+  become: yes
+  pip:
+          name: pymysql
+          state: present
+
+# MySQL Configuration
+#- name: Create mysql database
+#  mysql_db: name={{ wp_mysql_db }} state=present login_unix_socket=/var/run/mysqld/mysqld.sock
+#  become: yes
+
+#- name: Set the root password
+#  mysql_user: name={{ wp_mysql_user }} password={{ wp_mysql_password }} login_unix_socket=/var/run/mysqld/mysqld.sock
+#  become: yes
+
+- name: Creates database for WordPress
+  mysql_db:
+          name: "{{ wp_mysql_db }}"
+          state: present
+          login_user: "{{ mysql_root_user }}"
+          login_password: "{{ mysql_root_password }}"
+          login_unix_socket: "/var/run/mysqld/mysqld.sock"
+  become: yes
+
+- name: Create MySQL user for WordPress
+  mysql_user:
+          name: "{{ wp_mysql_user }}"
+          password: "{{ wp_mysql_password }}"
+          priv: "{{ wp_mysql_db }}.*:ALL"
+          state: present
+          login_user: "{{ mysql_root_user }}"
+          login_password: "{{ mysql_root_password }}"
+  become: yes
